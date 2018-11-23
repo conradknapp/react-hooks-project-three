@@ -1,27 +1,51 @@
 import React, { useContext } from "react";
-import { Store } from "../index";
+import TodosContext from "../context";
 
 const TodoList = () => {
-  const { state, dispatch } = useContext(Store);
+  const { state, dispatch } = useContext(TodosContext);
 
-  const header =
-    state.todos.length > 0 ? `${state.todos.length} Todos` : "No more todos";
+  const title =
+    state.todos.length > 0 ? `${state.todos.length} Todos` : "Nothing To Do!";
 
   return (
     <div className="container mx-auto max-w-md text-center font-mono">
-      <h1 className="text-bold">{header}</h1>
+      <h1 className="text-bold">{title}</h1>
       <ul className="text-white p-0">
-        {state.todos.map((todo, i) => (
+        {state.todos.map(todo => (
           <li
-            key={todo}
-            className="flex p-2 items-center list-reset my-2 py-4 bg-orange border-black border-dashed border-2"
+            key={todo.id}
+            className="flex p-1 items-center list-reset my-2 py-4 bg-orange-dark border-black border-dashed border-2"
           >
-            <span className="flex-1 cursor-pointer">{todo}</span>
+            <span
+              className={`flex-1 ml-12 cursor-pointer ${todo.complete &&
+                "line-through text-grey-darkest"}`}
+              onDoubleClick={() =>
+                dispatch({ type: "TOGGLE_TODO", payload: todo })
+              }
+            >
+              {todo.text}
+            </span>
             <button
               className="self-end"
-              onClick={() => dispatch({ type: "DONE", payload: todo })}
+              onClick={() =>
+                dispatch({ type: "SET_CURRENT_TODO", payload: todo })
+              }
             >
-              &times;
+              <img
+                src="https://icon.now.sh/edit/0050C5"
+                alt="Edit Icon"
+                className="h-6"
+              />
+            </button>
+            <button
+              className="self-end"
+              onClick={() => dispatch({ type: "REMOVE_TODO", payload: todo })}
+            >
+              <img
+                src="https://icon.now.sh/delete/8B0000"
+                alt="Delete Icon"
+                className="h-6"
+              />
             </button>
           </li>
         ))}
