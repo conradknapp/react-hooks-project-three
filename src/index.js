@@ -1,6 +1,7 @@
-import React, { useState, useContext, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useContext, useReducer } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
+
 import TodoList from "./components/TodoList";
 import TodoForm from "./components/TodoForm";
 import TodosContext from "./context";
@@ -10,10 +11,10 @@ const useAPI = endpoint => {
   const [value, setValue] = useState([]);
 
   useEffect(() => {
-    fetchData();
+    getData();
   }, []);
 
-  const fetchData = async () => {
+  const getData = async () => {
     const { data } = await axios.get(endpoint);
     setValue(data);
   };
@@ -22,18 +23,19 @@ const useAPI = endpoint => {
 };
 
 const App = () => {
-  const initialState = useAPI("https://todos-dsequjaojf.now.sh/todos");
-  const store = useContext(TodosContext);
-  const [state, dispatch] = useReducer(todosReducer, store);
+  const initialState = useContext(TodosContext);
+  const [state, dispatch] = useReducer(todosReducer, initialState);
+  // add custom hook to fetch our saved todos from API
+  const savedTodos = useAPI("https://todos-dsequjaojf.now.sh/todos");
 
   useEffect(
     () => {
       dispatch({
-        type: "LOAD_TODOS",
-        payload: initialState
+        type: "GET_TODOS",
+        payload: savedTodos
       });
     },
-    [initialState]
+    [savedTodos]
   );
 
   return (

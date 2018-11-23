@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import uuidv4 from "uuid/v4";
 import TodosContext from "../context";
 
 const TodoForm = () => {
@@ -22,14 +24,25 @@ const TodoForm = () => {
     [currentTodo.id]
   );
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     event.preventDefault();
     if (currentTodo.text) {
       // if we have a currentTodo, update it
-      dispatch({ type: "UPDATE_TODO", payload: todo });
+      const { data } = await axios.patch(
+        `https://todos-dsequjaojf.now.sh/todos/${currentTodo.id}`,
+        { text: todo }
+      );
+      /* after API: todo -> data */
+      dispatch({ type: "UPDATE_TODO", payload: data });
     } else {
       // otherwise add it
-      dispatch({ type: "ADD_TODO", payload: todo });
+      /* after API: created 'newTodo' here w/ uuid */
+      const { data } = await axios.post(
+        "https://todos-dsequjaojf.now.sh/todos",
+        { id: uuidv4(), text: todo, complete: false }
+      );
+      /* after API: todo -> data */
+      dispatch({ type: "ADD_TODO", payload: data });
     }
     // in either case remove the todo value from the input
     setTodo("");
