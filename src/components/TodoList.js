@@ -3,7 +3,6 @@ import TodosContext from "../context";
 
 const TodoList = () => {
   const { state, dispatch } = useContext(TodosContext);
-
   const title =
     state.todos.length > 0 ? `${state.todos.length} Todos` : "Nothing To Do!";
 
